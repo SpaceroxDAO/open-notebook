@@ -179,6 +179,340 @@ Currently minimal test coverage. Tests directory exists but needs implementation
 3. **Repository Pattern**: Abstracts database operations for maintainability
 4. **Multi-Model Support**: Configurable AI providers without code changes
 5. **Content Agnostic**: Handles PDFs, videos, audio, web content through Content-Core
+
+---
+
+# 🧪 COMPREHENSIVE MCP PUPPETEER TESTING PLAN
+
+## 🎯 NEXT STEPS FOR TESTING IMPLEMENTATION
+
+### Phase 1: Environment Setup ✅ (COMPLETED)
+- ✅ Puppeteer MCP Server installed globally (`mcp-server-puppeteer`)
+- ✅ Claude Code MCP configuration completed
+- ✅ Chrome debugging on port 9222
+- ✅ SurrealDB running on port 8002
+- ✅ Open-notebook Streamlit app on port 8502
+
+### Phase 2: Test Structure Creation (READY TO IMPLEMENT)
+**Directory Structure Setup:**
+```
+tests/
+├── ui-tests/
+│   ├── config/
+│   │   ├── test-config.js         # Test configuration
+│   │   └── selectors.js           # Element selectors
+│   ├── suites/
+│   │   ├── 01-smoke.test.js       # Basic functionality
+│   │   ├── 02-notebook-mgmt.test.js  # Notebook management
+│   │   ├── 03-source-mgmt.test.js    # Source management
+│   │   ├── 04-note-creation.test.js  # Note creation/editing
+│   │   ├── 05-search-ask.test.js     # Search & Ask functionality
+│   │   ├── 06-podcast-generation.test.js # Podcast features
+│   │   ├── 07-models-settings.test.js    # Models & Settings
+│   │   ├── 08-responsive.test.js     # Mobile responsiveness
+│   │   └── 09-edge-cases.test.js     # Error handling
+│   ├── screenshots/
+│   │   ├── smoke/, notebooks/, sources/, notes/
+│   │   ├── search/, podcasts/, models/, responsive/
+│   │   └── edge-cases/
+│   └── reports/
+└── docs/
+    └── test-results/
+```
+
+### Phase 3: Application Feature Analysis & Test Mapping
+
+**Core Application Features Identified:**
+
+#### 🏠 **Home/Landing (app_home.py)**
+- Object viewing system (notes, sources, embeddings, insights)
+- URL parameter routing (`?object_id=`)
+- Automatic redirection to Notebooks page
+
+#### 📒 **Notebook Management (2_📒_Notebooks.py)**
+- Create/edit/delete notebooks
+- Archive/unarchive functionality
+- Name and description editing
+- Source management within notebooks
+- Note creation and management
+- Real-time chat interface
+
+#### 🔍 **Search & Ask (3_🔍_Ask_and_Search.py)**
+- Knowledge base querying (beta)
+- Text search functionality
+- Vector search capabilities
+- Multi-model AI processing pipeline
+- Results scoring and relevance
+
+#### 🎙️ **Podcast Generation (5_🎙️_Podcasts.py)**
+- Text-to-speech model integration
+- Multi-provider support (Gemini, OpenAI, Anthropic)
+- Episode creation from notebook content
+- Conversation styles and dialogue structures
+- Participant roles and engagement techniques
+
+#### 🤖 **Model Management (7_🤖_Models.py)**
+- AI model configuration
+- Provider management
+- Text-to-speech model setup
+- Language model configuration
+
+#### 💱 **Transformations (8_💱_Transformations.py)**
+- Content processing workflows
+- AI-powered content enhancement
+
+#### ⚙️ **Settings (10_⚙️_Settings.py)**
+- Application configuration
+- User preferences
+
+### Phase 4: Comprehensive Test Execution Plan
+
+#### **Test Suite 1: Smoke Tests (01-smoke.test.js)**
+**Purpose**: Verify basic application functionality
+**MCP Commands**:
+```javascript
+// Basic connectivity and navigation
+mcp__puppeteer__puppeteer_connect_active_tab()
+mcp__puppeteer__puppeteer_navigate({ url: "http://localhost:8502" })
+mcp__puppeteer__puppeteer_screenshot({ name: "smoke-homepage-load" })
+
+// Test main navigation
+mcp__puppeteer__puppeteer_click({ selector: "a[href*='Notebooks']" })
+mcp__puppeteer__puppeteer_screenshot({ name: "smoke-notebooks-page" })
+
+// Verify no critical console errors
+mcp__puppeteer__puppeteer_evaluate({ 
+  script: "console.error = (function(){ var errors = []; return function(){ errors.push(arguments); return errors; }})();" 
+})
+```
+
+#### **Test Suite 2: Notebook Management (02-notebook-mgmt.test.js)**
+**Purpose**: Test complete notebook lifecycle
+**Test Cases**:
+- Create new notebook
+- Edit notebook name/description
+- Archive/unarchive notebook
+- Delete notebook
+- Navigate between notebooks
+
+**MCP Commands**:
+```javascript
+// Create notebook test
+mcp__puppeteer__puppeteer_click({ selector: "button:contains('Create')" })
+mcp__puppeteer__puppeteer_fill({ selector: "input[placeholder*='name']", value: "Test Notebook" })
+mcp__puppeteer__puppeteer_fill({ selector: "textarea[placeholder*='description']", value: "Test Description" })
+mcp__puppeteer__puppeteer_screenshot({ name: "notebook-creation-form" })
+```
+
+#### **Test Suite 3: Source Management (03-source-mgmt.test.js)**
+**Purpose**: Test source upload and processing
+**Test Cases**:
+- Upload PDF documents
+- Upload text files
+- URL source addition
+- Source processing verification
+- Source deletion
+
+#### **Test Suite 4: Note Creation (04-note-creation.test.js)**
+**Purpose**: Test note creation and AI assistance
+**Test Cases**:
+- Manual note creation
+- AI-generated notes from sources
+- Note editing and formatting
+- Note attachment to sources
+
+#### **Test Suite 5: Search & Ask (05-search-ask.test.js)**
+**Purpose**: Test search and AI query functionality
+**Test Cases**:
+- Text search across notebooks
+- Vector similarity search
+- AI-powered knowledge base queries
+- Result relevance verification
+
+#### **Test Suite 6: Podcast Generation (06-podcast-generation.test.js)**
+**Purpose**: Test podcast creation features
+**Test Cases**:
+- Model configuration verification
+- Episode creation from notes
+- Audio generation process
+- Download functionality
+
+#### **Test Suite 7: Models & Settings (07-models-settings.test.js)**
+**Purpose**: Test configuration interfaces
+**Test Cases**:
+- AI model setup
+- Provider configuration
+- Settings persistence
+- Error handling for invalid configurations
+
+#### **Test Suite 8: Responsive Design (08-responsive.test.js)**
+**Purpose**: Test mobile and tablet layouts
+**Viewports to Test**:
+- Mobile: 375px × 667px
+- Tablet: 768px × 1024px  
+- Desktop: 1920px × 1080px
+
+**MCP Commands**:
+```javascript
+// Mobile viewport test
+mcp__puppeteer__puppeteer_evaluate({ 
+  script: `
+    document.documentElement.style.width = '375px';
+    document.documentElement.style.height = '667px';
+    window.dispatchEvent(new Event('resize'));
+    'Mobile viewport set'
+  `
+})
+mcp__puppeteer__puppeteer_screenshot({ name: "responsive-mobile-375" })
+```
+
+#### **Test Suite 9: Edge Cases & Error Handling (09-edge-cases.test.js)**
+**Purpose**: Test error scenarios and edge cases
+**Test Cases**:
+- Large file uploads
+- Network disconnection simulation
+- Invalid input handling
+- API timeout scenarios
+- Memory-intensive operations
+
+### Phase 5: Test Execution Workflow
+
+#### **Pre-Test Setup Checklist**
+```bash
+# 1. Verify all services running
+docker ps  # Check SurrealDB container
+curl -I http://localhost:8502  # Verify Streamlit
+lsof -i :9222  # Verify Chrome debugging
+
+# 2. Reset test environment
+# Clear browser cache, reset database to known state
+# Take baseline screenshots
+```
+
+#### **Test Execution Pattern**
+For each test case:
+1. **Navigate**: Go to relevant page
+2. **Screenshot**: Capture initial state  
+3. **Action**: Perform user interaction
+4. **Verify**: Check expected outcome
+5. **Screenshot**: Capture result state
+6. **Document**: Record pass/fail with evidence
+
+#### **Automated Test Runner Commands**
+```javascript
+// Template for systematic testing
+function executeTestSuite(suiteName, testCases) {
+  for (const testCase of testCases) {
+    // 1. Setup
+    mcp__puppeteer__puppeteer_navigate({ url: testCase.url });
+    mcp__puppeteer__puppeteer_screenshot({ name: `${suiteName}-${testCase.name}-before` });
+    
+    // 2. Execute
+    testCase.actions.forEach(action => {
+      mcp__puppeteer__puppeteer_click({ selector: action.selector });
+      // or mcp__puppeteer__puppeteer_fill({ selector: action.selector, value: action.value });
+    });
+    
+    // 3. Verify
+    mcp__puppeteer__puppeteer_screenshot({ name: `${suiteName}-${testCase.name}-after` });
+    
+    // 4. Validate
+    mcp__puppeteer__puppeteer_evaluate({ script: testCase.verification });
+  }
+}
+```
+
+### Phase 6: Results Documentation & Reporting
+
+#### **Test Report Template**
+```markdown
+# Open-Notebook UI Test Report
+**Date**: [YYYY-MM-DD]
+**Tester**: Claude Code + MCP Puppeteer
+**Environment**: Streamlit 8502, SurrealDB 8002, Chrome Debug 9222
+
+## Executive Summary
+- Total Tests: X
+- Passed: X
+- Failed: X  
+- Critical Issues: X
+
+## Test Results by Suite
+### Smoke Tests: ✅ PASSED
+- Basic navigation: ✅
+- Page loading: ✅
+- No critical errors: ✅
+
+### Notebook Management: ⚠️ PARTIAL
+- Create notebook: ✅
+- Edit notebook: ❌ Form validation issue
+- Delete notebook: ✅
+
+[Continue for each suite...]
+
+## Critical Issues Found
+1. **Issue**: Notebook form validation
+   **Severity**: High
+   **Screenshots**: notebook-creation-error.png
+   **Steps to Reproduce**: [detailed steps]
+
+## Performance Metrics
+- Average page load: X seconds
+- Largest contentful paint: X seconds
+- Time to interactive: X seconds
+
+## Browser Compatibility
+- Chrome: ✅ Fully supported
+- Firefox: 🔄 Testing pending
+- Safari: 🔄 Testing pending
+```
+
+### Phase 7: Continuous Testing Integration
+
+#### **Daily Test Routine**
+```bash
+# Morning health check
+run_smoke_tests()
+
+# Feature-specific testing after changes
+run_targeted_tests(changed_features)
+
+# Weekly comprehensive testing
+run_full_test_suite()
+```
+
+#### **Test Maintenance**
+- Update selectors when UI changes
+- Add new test cases for new features
+- Maintain screenshot baselines
+- Performance benchmark tracking
+
+---
+
+## 🚀 IMMEDIATE NEXT ACTIONS
+
+### To Continue Testing Implementation:
+1. **Run Phase 2**: Create test directory structure
+2. **Execute Phase 3**: Begin with smoke tests using MCP commands
+3. **Document Phase 4**: Record all findings with screenshots
+4. **Iterate Phase 5**: Fix issues and re-test
+5. **Report Phase 6**: Generate comprehensive test report
+
+### Ready-to-Execute MCP Commands:
+```javascript
+// Start testing session
+mcp__puppeteer__puppeteer_connect_active_tab()
+mcp__puppeteer__puppeteer_navigate({ url: "http://localhost:8502" })
+mcp__puppeteer__puppeteer_screenshot({ name: "test-session-start" })
+
+// Begin smoke tests immediately
+// [Follow smoke test suite above]
+```
+
+**Environment Status**: ✅ READY FOR TESTING
+**Next Step**: Execute Phase 2 test structure creation
+**Estimated Duration**: 2-3 hours for complete testing cycle
+
 # important-instruction-reminders
 Do what has been asked; nothing more, nothing less.
 NEVER create files unless they're absolutely necessary for achieving your goal.
